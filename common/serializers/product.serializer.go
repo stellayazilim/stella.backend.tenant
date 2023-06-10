@@ -15,7 +15,10 @@ type IProductSerializer interface {
 }
 
 type ProductSerializer struct {
-	Name string `json:"name"`
+	ID          uint                 `json:"id"`
+	Name        string               `json:"name"`
+	Description string               `json:"description"`
+	Categories  []CategorySerializer `json:"categories"`
 }
 
 func CreateProductSerializer() IProductSerializer {
@@ -32,8 +35,12 @@ func (u ProductSerializer) SerializeAllFromEntity(products []*models.Product) []
 }
 
 func (u ProductSerializer) SerializeFromEntity(product *models.Product) ProductSerializer {
+	cs := CreateCategorySerializer()
 	return ProductSerializer{
-		Name: product.Name,
+		ID:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		Categories:  cs.SerializeAllFromEntity(product.Categories),
 	}
 }
 
@@ -45,8 +52,8 @@ func (u ProductSerializer) SerializeFromCreateDto(dto *dto.ProductCreateDto) *mo
 		Explanation: dto.Explanation,
 		Sku:         dto.Sku,
 		Specs:       dto.Specs,
-		Tags:        dto.Tags,
-		Categories:  cs.SerializeAllFromId(dto.Categories),
+		//	Tags:        dto.Tags,
+		Categories: cs.SerializeAllFromId(dto.Categories),
 	}
 }
 

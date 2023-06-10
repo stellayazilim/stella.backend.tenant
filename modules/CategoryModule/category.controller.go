@@ -7,6 +7,7 @@ import (
 	"github.com/stellayazilim/stella.backend.tenant/common/serializers"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	"net/http"
+	"strconv"
 )
 
 type ICategoryController interface {
@@ -37,7 +38,7 @@ func (c categoryController) CreateCategory(ctx *gin.Context) {
 		})
 		return
 	}
-	category := c.categorySerializer.SerializeFromCreateDto(&body)
+	category := c.categorySerializer.SerializeFromCreateDto(body)
 	if err := c.categoryServcie.CreateCategory(&category); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
 		return
@@ -52,7 +53,15 @@ func (c categoryController) CreateCategory(ctx *gin.Context) {
 }
 
 func (c categoryController) GetCategories(ctx *gin.Context) {
-	if categories, err := c.categoryServcie.GetCategories(-1, -1); err == nil {
+	limit, err := strconv.ParseInt(ctx.Query("limit"), 10, 32)
+	if err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	if categories, err := c.categoryServcie.GetCategories(int(limit)); err == nil {
 		ctx.JSON(http.StatusOK, c.categorySerializer.SerializeAllFromEntity(categories))
 	}
 
@@ -60,6 +69,7 @@ func (c categoryController) GetCategories(ctx *gin.Context) {
 }
 func (c categoryController) GetCategoryById(ctx *gin.Context) {
 	id, err := helpers.ConvertUint(ctx.Param("id"))
+
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -72,7 +82,7 @@ func (c categoryController) GetCategoryById(ctx *gin.Context) {
 			ctx.AbortWithStatus(http.StatusNotFound)
 			return
 		}
-		ctx.JSON(http.StatusOK, c.categorySerializer.SerializeFromEntity(category))
+		ctx.JSON(http.StatusOK, c.categorySerializer.SerializeFromEntity(&category))
 		return
 	}
 

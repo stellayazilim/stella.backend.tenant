@@ -10,4 +10,5 @@ type Role struct {
 	Name        string
 	Description string
 	Perms       []byte `gorm:"type:bytea"`
+	Users       []*User
 }

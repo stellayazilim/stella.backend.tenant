@@ -7,9 +7,9 @@ import (
 )
 
 type ICategorySerializer interface {
-	SerializeAllFromEntity(categories []models.Category) []CategorySerializer
-	SerializeFromEntity(category models.Category) CategorySerializer
-	SerializeFromCreateDto(dto *dto.CategoryCreateDto) models.Category
+	SerializeAllFromEntity(categories []*models.Category) []CategorySerializer
+	SerializeFromEntity(category *models.Category) CategorySerializer
+	SerializeFromCreateDto(dto dto.CategoryCreateDto) models.Category
 	SerializeFromID(id uint) *models.Category
 	SerializeAllFromId(ids []uint) []*models.Category
 }
@@ -25,7 +25,7 @@ func CreateCategorySerializer() ICategorySerializer {
 	return &CategorySerializer{}
 }
 
-func (u CategorySerializer) SerializeAllFromEntity(categories []models.Category) []CategorySerializer {
+func (u CategorySerializer) SerializeAllFromEntity(categories []*models.Category) []CategorySerializer {
 	var serialized []CategorySerializer
 
 	for _, category := range categories {
@@ -35,7 +35,7 @@ func (u CategorySerializer) SerializeAllFromEntity(categories []models.Category)
 	return serialized
 }
 
-func (u CategorySerializer) SerializeFromEntity(category models.Category) CategorySerializer {
+func (u CategorySerializer) SerializeFromEntity(category *models.Category) CategorySerializer {
 
 	ps := CreateProductSerializer()
 
@@ -48,12 +48,12 @@ func (u CategorySerializer) SerializeFromEntity(category models.Category) Catego
 
 }
 
-func (u CategorySerializer) SerializeFromCreateDto(dto *dto.CategoryCreateDto) models.Category {
+func (u CategorySerializer) SerializeFromCreateDto(dto dto.CategoryCreateDto) models.Category {
 
 	var products []*models.Product
 	for _, p := range dto.Products {
 		product := models.Product{}
-		product.ID = *p
+		product.ID = p
 		products = append(products, &product)
 	}
 	return models.Category{

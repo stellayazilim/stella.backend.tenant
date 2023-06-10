@@ -9,7 +9,7 @@ import (
 
 type ICategoryService interface {
 	CreateCategory(data *models.Category) error
-	GetCategories(limit int, offest int) ([]models.Category, error)
+	GetCategories(limit int) ([]*models.Category, error)
 	GetCategoryById(id uint) (models.Category, error)
 	UpdateCategoryById(id uint, data models.Category) error
 	DeleteCategoryById(id uint) error
@@ -30,21 +30,17 @@ func (s categoryServcie) CreateCategory(data *models.Category) error {
 	return nil
 }
 
-func (s categoryServcie) GetCategories(limit int, offest int) ([]models.Category, error) {
-	var categories []models.Category
-	if err := DatabaseModule.DB.Find(&categories).Limit(limit).Offset(offest).Error; err != nil {
-		log.Fatal(err)
-		return categories, fmt.Errorf("Could not get category(s)")
-	}
+func (s categoryServcie) GetCategories(limit int) ([]*models.Category, error) {
+	var categories []*models.Category
+	DatabaseModule.DB.Limit(limit).Preload("Products").Find(&categories)
+
 	return categories, nil
 }
 
 func (s categoryServcie) GetCategoryById(id uint) (models.Category, error) {
 	var category models.Category
 
-	if err := DatabaseModule.DB.Find(&category, id).Error; err != nil {
-		return category, err
-	}
+	DatabaseModule.DB.Preload("Products").Find(&category, id)
 
 	return category, nil
 }

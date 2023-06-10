@@ -11,9 +11,8 @@ type IUserSerializer interface {
 	SerializeFromCreateDto(dto *dto.UserCreateDto) models.User
 }
 type userSerializer struct {
-	ID        uint   `json:"id"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
 }
 
 func UserSerializer() IUserSerializer {
@@ -29,16 +28,14 @@ func (u userSerializer) SerializeAllFromEntity(users []models.User) []userSerial
 }
 func (u userSerializer) SerializeFromEntity(user models.User) userSerializer {
 	return userSerializer{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
+		ID:   user.ID,
+		Name: user.Name,
 	}
 }
 
 func (u userSerializer) SerializeFromCreateDto(dto *dto.UserCreateDto) models.User {
 	return models.User{
-		FirstName:   dto.FirstName,
-		LastName:    dto.LastName,
+		Name:        dto.Name,
 		Email:       dto.Email,
 		PhoneNumber: dto.PhoneNumber,
 		Password:    dto.Password,

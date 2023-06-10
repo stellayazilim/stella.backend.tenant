@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/stellayazilim/stella.backend.tenant/misc"
 	"github.com/stellayazilim/stella.backend.tenant/modules/CategoryModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ContentModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"
@@ -24,6 +25,9 @@ func main() {
 	*/
 	// init database
 	DatabaseModule.InitDatabaseModule()
+
+	// add administrator user
+	misc.Initalize()
 	// migrate database on startup
 	DatabaseModule.MigrateDB()
 	// init router

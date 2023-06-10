@@ -11,7 +11,7 @@ type Product struct {
 	Description string
 	Explanation string
 	Sku         string
-	Specs       map[string]string `gorm:"type:bytea"`
-	Tags        []string          `gorm:"type:varchar(24)[]"`
+	Specs       map[string]string `gorm:"type:bytea" serializer:"json"`
+	Tags        []string          `gorm:"serializer:json"`
 	Categories  []*Category       `gorm:"many2many:product_category;"`
 }
