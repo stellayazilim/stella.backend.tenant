@@ -10,7 +10,7 @@ type User struct {
 	Name        string
 	Email       string `gorm:"unique"`
 	PhoneNumber string `gorm:"unique"`
-	Password    string
+	Password    []byte
 	Sessions    []Session
 	IsValidated bool
 	Role        *Role

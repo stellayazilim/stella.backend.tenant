@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/stellayazilim/stella.backend.tenant/models"
 	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"
+	"gorm.io/gorm"
 	"log"
 	"regexp"
 	"strings"
@@ -13,14 +14,19 @@ type IUserService interface {
 	Create(user *models.User) error
 	GetUsers(limit int, offset int) ([]models.User, error)
 	GetUserById(id uint) (models.User, error)
+	GetUserByEmail(user *models.User) error
 	UpdateUserById(id uint, user models.User) error
 	DeleteUserById(id uint) error
 }
-type userService struct{}
+type userService struct {
+	DB *gorm.DB
+}
 
 // constructor
 func UserService() IUserService {
-	return &userService{}
+	return &userService{
+		DB: DatabaseModule.DB,
+	}
 }
 
 func (s userService) Create(user *models.User) error {
@@ -57,6 +63,13 @@ func (s userService) UpdateUserById(id uint, user models.User) error {
 	user.ID = id
 	if err := DatabaseModule.DB.Save(&user).Error; err != nil {
 		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+func (s userService) GetUserByEmail(user *models.User) error {
+	if err := s.DB.Preload("Role").Find(user).Error; err != nil {
+		log.Fatal("error happen in user service")
 		return err
 	}
 	return nil
