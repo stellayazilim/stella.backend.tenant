@@ -3,6 +3,8 @@ package UserModule
 import (
 	"github.com/stellayazilim/stella.backend.tenant/models"
 	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule/dto"
+	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 type IUserSerializer interface {
@@ -34,10 +36,15 @@ func (u userSerializer) SerializeFromEntity(user models.User) userSerializer {
 }
 
 func (u userSerializer) SerializeFromCreateDto(dto *dto.UserCreateDto) models.User {
+	password, err := bcrypt.GenerateFromPassword([]byte(dto.Password), 16)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	return models.User{
 		Name:        dto.Name,
 		Email:       dto.Email,
 		PhoneNumber: dto.PhoneNumber,
-		Password:    dto.Password,
+		Password:    password,
 	}
 }
