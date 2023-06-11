@@ -6,7 +6,7 @@ import (
 
 type Product struct {
 	gorm.Model
-	TenantId    string
+	TenantID    string
 	Name        string
 	Description string
 	Explanation string
@@ -14,4 +14,5 @@ type Product struct {
 	Specs       map[string]string `gorm:"type:bytea" serializer:"json"`
 	Tags        []string          `gorm:"serializer:json"`
 	Categories  []*Category       `gorm:"many2many:product_category;"`
+	Images      []*Image
 }

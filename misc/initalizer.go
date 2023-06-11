@@ -5,6 +5,7 @@ import (
 	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"os"
 )
 
 func Initalize() {
@@ -25,6 +26,7 @@ func Initalize() {
 			log.Fatal(err)
 		}
 		user := models.User{
+			TenantID:    os.Getenv("TENANT_ID"),
 			Name:        "administrator",
 			Email:       "administrator@elitasmakina.com",
 			Password:    password,

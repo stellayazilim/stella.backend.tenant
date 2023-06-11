@@ -6,7 +6,7 @@ import (
 
 type Role struct {
 	gorm.Model
-	TenantId    string
+	TenantID    string
 	Name        string
 	Description string
 	Perms       []byte `gorm:"type:bytea"`

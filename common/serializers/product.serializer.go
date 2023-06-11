@@ -1,15 +1,15 @@
 package serializers
 
 import (
-	"github.com/stellayazilim/stella.backend.tenant/common/dto"
 	"github.com/stellayazilim/stella.backend.tenant/models"
+	"github.com/stellayazilim/stella.backend.tenant/modules/ProductModule/DTO"
 	"gorm.io/gorm"
 )
 
 type IProductSerializer interface {
 	SerializeAllFromEntity(product []*models.Product) []ProductSerializer
 	SerializeFromEntity(product *models.Product) ProductSerializer
-	SerializeFromCreateDto(dto *dto.ProductCreateDto) *models.Product
+	SerializeFromCreateDto(dto *DTO.ProductCreateDto) *models.Product
 	SerializeFromID(id uint) models.Product
 	SerializeAllFromID(dto []uint) []models.Product
 }
@@ -44,7 +44,7 @@ func (u ProductSerializer) SerializeFromEntity(product *models.Product) ProductS
 	}
 }
 
-func (u ProductSerializer) SerializeFromCreateDto(dto *dto.ProductCreateDto) *models.Product {
+func (u ProductSerializer) SerializeFromCreateDto(dto *DTO.ProductCreateDto) *models.Product {
 	cs := CreateCategorySerializer()
 	return &models.Product{
 		Name:        dto.Name,

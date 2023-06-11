@@ -10,4 +10,5 @@ func MigrateDB() {
 	DB.AutoMigrate(&models.Settings{})
 	DB.AutoMigrate(&models.Session{})
 	DB.AutoMigrate(&models.Validation{})
+	DB.AutoMigrate(&models.Image{})
 }

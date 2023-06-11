@@ -36,7 +36,7 @@ func (s productService) GetProducts(limit int, offset int) ([]*models.Product, e
 
 func (s productService) GetProductById(id uint) (models.Product, error) {
 	var product models.Product
-	if err := DatabaseModule.DB.Find(&product, id).Error; err != nil {
+	if err := DatabaseModule.DB.Preload("Categories").Find(&product, id).Error; err != nil {
 		return product, err
 	}
 	return product, nil
