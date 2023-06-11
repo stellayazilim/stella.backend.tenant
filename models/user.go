@@ -7,6 +7,7 @@ import (
 // users shared between tenants
 type User struct {
 	gorm.Model
+	TenantID    string
 	Name        string
 	Email       string `gorm:"unique"`
 	PhoneNumber string `gorm:"unique"`

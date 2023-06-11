@@ -6,7 +6,7 @@ import (
 
 type Category struct {
 	gorm.Model
-	TenantId    string
+	TenantID    string
 	Name        string
 	Description string
 	Products    []*Product `gorm:"many2many:product_category;"`

@@ -7,7 +7,8 @@ import (
 // users shared between tenants
 type Validation struct {
 	gorm.Model
-	User   User
-	UserID uint
-	Token  string
+	TenantID string
+	User     User
+	UserID   uint
+	Token    string
 }
