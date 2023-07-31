@@ -1,4 +1,4 @@
-package DatabaseModule
+package Database
 
 import "github.com/stellayazilim/stella.backend.tenant/types"
 

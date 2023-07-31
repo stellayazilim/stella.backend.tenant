@@ -3,12 +3,12 @@ package ValidationModule
 import (
 	"fmt"
 	"github.com/lucsky/cuid"
-	"github.com/stellayazilim/stella.backend.tenant/models"
 	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"
+	"github.com/stellayazilim/stella.backend.tenant/types"
 )
 
 type IValidationService interface {
-	CreateValidationToken(user *models.User)
+	CreateValidationToken(user *types.User)
 	VerifyValidationToken(id uint, token string) bool
 }
 
@@ -18,9 +18,9 @@ func ValidationService() IValidationService {
 	return validationService{}
 }
 
-func (v validationService) CreateValidationToken(user *models.User) {
+func (v validationService) CreateValidationToken(user *types.User) {
 	go func() {
-		vl := models.Validation{
+		vl := types.Validation{
 			Token: cuid.Slug(),
 			User:  *user,
 		}

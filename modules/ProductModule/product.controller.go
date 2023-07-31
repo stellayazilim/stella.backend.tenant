@@ -79,6 +79,24 @@ func (c productController) UpdateProductById(ctx *gin.Context) {
 		log.Fatal(err, id)
 	}
 
+	body := DTO.ProductUpdateDto{}
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"errors": helpers.ListOfErrors(err),
+		})
+		log.Fatal(err)
+	}
+
+	entity := body.ConvertToEntity()
+	if err := c.productService.UpdateProductById(id, &entity); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
+			"errors": helpers.ListOfErrors(err),
+		})
+	}
+
+	serializer := ProductSerializer()
+	ctx.JSON(http.StatusOK, serializer.SerializeFromEntity(&entity))
+
 }
 
 func (c productController) DeleteProductById(ctx *gin.Context) {

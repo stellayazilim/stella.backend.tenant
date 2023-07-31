@@ -1,4 +1,4 @@
-package AuthModule
+package Services
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package ProductModule
+package Services
 
 import (
 	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"

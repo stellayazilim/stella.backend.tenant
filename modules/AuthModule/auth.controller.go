@@ -5,14 +5,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/common/dto"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
-	"github.com/stellayazilim/stella.backend.tenant/models"
 	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule"
+	"github.com/stellayazilim/stella.backend.tenant/types"
 	"log"
 	"net/http"
 )
 
 type IAuthController interface {
 	LoginWithCredentials(ctx *gin.Context)
+	GetMe(ctx *gin.Context)
+	Refresh(ctx *gin.Context)
 }
 type authController struct {
 	authService IAuthService
@@ -26,7 +28,7 @@ func AuthController() IAuthController {
 	}
 }
 
-func (c authController) LoginWithCredentials(ctx *gin.Context) {
+func (c *authController) LoginWithCredentials(ctx *gin.Context) {
 	loginData := dto.UserLoginDto{}
 	if err := ctx.ShouldBindJSON(&loginData); err != nil {
 
@@ -37,7 +39,7 @@ func (c authController) LoginWithCredentials(ctx *gin.Context) {
 		return
 	}
 
-	user := models.User{
+	user := types.User{
 		Email: loginData.Email,
 	}
 
@@ -48,7 +50,7 @@ func (c authController) LoginWithCredentials(ctx *gin.Context) {
 		})
 		return
 	}
-	fmt.Println("istek buraya ulasti : before validate pass", user)
+
 	// check password of user
 	if err := c.authService.ValidatePassword(&user, loginData); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
@@ -62,7 +64,6 @@ func (c authController) LoginWithCredentials(ctx *gin.Context) {
 		signedTokens tokens
 		err          error
 	)
-	fmt.Println("istek buraya ulasti : before sign tokens")
 	if signedTokens, err = c.authService.SignTokens(&user); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": err,
@@ -77,4 +78,25 @@ func (c authController) LoginWithCredentials(ctx *gin.Context) {
 		"refreshToken": signedTokens.RefreshToken,
 	})
 
+}
+
+func (c *authController) GetMe(ctx *gin.Context) {
+
+	token := ctx.GetHeader("Authorization")
+
+	fmt.Println(token)
+	ctx.JSON(http.StatusOK, gin.H{
+		"username": "stella",
+	})
+}
+
+func (c *authController) Refresh(ctx *gin.Context) {
+	token := ctx.GetHeader("Authorization")
+
+	fmt.Println(token)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"accessToken":  token,
+		"refreshToken": token,
+	})
 }

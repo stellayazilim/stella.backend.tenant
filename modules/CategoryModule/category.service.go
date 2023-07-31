@@ -2,16 +2,16 @@ package CategoryModule
 
 import (
 	"fmt"
-	"github.com/stellayazilim/stella.backend.tenant/models"
 	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"
+	"github.com/stellayazilim/stella.backend.tenant/types"
 	"log"
 )
 
 type ICategoryService interface {
-	CreateCategory(data *models.Category) error
-	GetCategories(limit int) ([]*models.Category, error)
-	GetCategoryById(id uint) (models.Category, error)
-	UpdateCategoryById(id uint, data models.Category) error
+	CreateCategory(data *types.Category) error
+	GetCategories(limit int) ([]*types.Category, error)
+	GetCategoryById(id uint) (types.Category, error)
+	UpdateCategoryById(id uint, data types.Category) error
 	DeleteCategoryById(id uint) error
 }
 
@@ -22,7 +22,7 @@ func CategoryService() ICategoryService {
 	return &categoryServcie{}
 }
 
-func (s categoryServcie) CreateCategory(data *models.Category) error {
+func (s categoryServcie) CreateCategory(data *types.Category) error {
 	if err := DatabaseModule.DB.Create(data).Error; err != nil {
 		return fmt.Errorf("Category could not be created")
 	}
@@ -30,22 +30,22 @@ func (s categoryServcie) CreateCategory(data *models.Category) error {
 	return nil
 }
 
-func (s categoryServcie) GetCategories(limit int) ([]*models.Category, error) {
-	var categories []*models.Category
+func (s categoryServcie) GetCategories(limit int) ([]*types.Category, error) {
+	var categories []*types.Category
 	DatabaseModule.DB.Limit(limit).Preload("Products").Find(&categories)
 
 	return categories, nil
 }
 
-func (s categoryServcie) GetCategoryById(id uint) (models.Category, error) {
-	var category models.Category
+func (s categoryServcie) GetCategoryById(id uint) (types.Category, error) {
+	var category types.Category
 
 	DatabaseModule.DB.Preload("Products").Find(&category, id)
 
 	return category, nil
 }
 
-func (s categoryServcie) UpdateCategoryById(id uint, data models.Category) error {
+func (s categoryServcie) UpdateCategoryById(id uint, data types.Category) error {
 
 	data.ID = id
 	if err := DatabaseModule.DB.Save(&data).Error; err != nil {
@@ -57,7 +57,7 @@ func (s categoryServcie) UpdateCategoryById(id uint, data models.Category) error
 
 func (s categoryServcie) DeleteCategoryById(id uint) error {
 
-	if err := DatabaseModule.DB.Delete(models.Category{}, id).Error; err != nil {
+	if err := DatabaseModule.DB.Delete(types.Category{}, id).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}

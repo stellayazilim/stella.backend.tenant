@@ -1,13 +1,14 @@
-package models
+package Types
 
 import (
 	"gorm.io/gorm"
 )
 
-type Category struct {
+type Role struct {
 	gorm.Model
 	TenantID    string
 	Name        string
 	Description string
-	Products    []*Product `gorm:"many2many:product_category;"`
+	Perms       []byte `gorm:"type:bytea"`
+	Users       []*User
 }

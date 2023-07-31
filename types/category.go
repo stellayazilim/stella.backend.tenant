@@ -1,13 +1,13 @@
-package models
+package Types
 
 import (
 	"gorm.io/gorm"
 )
 
-type Address struct {
+type Category struct {
 	gorm.Model
 	TenantID    string
 	Name        string
 	Description string
-	Perms       []byte `gorm:"type:bytea"`
+	Products    []*Product `gorm:"many2many:product_category;"`
 }

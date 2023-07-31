@@ -1,4 +1,4 @@
-package UserModule
+package Services
 
 import (
 	"fmt"

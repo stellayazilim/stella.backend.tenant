@@ -2,16 +2,15 @@ package serializers
 
 import (
 	"github.com/stellayazilim/stella.backend.tenant/common/dto"
-	"github.com/stellayazilim/stella.backend.tenant/models"
 	"gorm.io/gorm"
 )
 
 type ICategorySerializer interface {
-	SerializeAllFromEntity(categories []*models.Category) []CategorySerializer
-	SerializeFromEntity(category *models.Category) CategorySerializer
-	SerializeFromCreateDto(dto dto.CategoryCreateDto) models.Category
-	SerializeFromID(id uint) *models.Category
-	SerializeAllFromId(ids []uint) []*models.Category
+	SerializeAllFromEntity(categories []*types.Category) []CategorySerializer
+	SerializeFromEntity(category *types.Category) CategorySerializer
+	SerializeFromCreateDto(dto dto.CategoryCreateDto) types.Category
+	SerializeFromID(id uint) *types.Category
+	SerializeAllFromId(ids []uint) []*types.Category
 }
 
 type CategorySerializer struct {
@@ -25,7 +24,7 @@ func CreateCategorySerializer() ICategorySerializer {
 	return &CategorySerializer{}
 }
 
-func (u CategorySerializer) SerializeAllFromEntity(categories []*models.Category) []CategorySerializer {
+func (u CategorySerializer) SerializeAllFromEntity(categories []*types.Category) []CategorySerializer {
 	var serialized []CategorySerializer
 
 	for _, category := range categories {
@@ -35,7 +34,7 @@ func (u CategorySerializer) SerializeAllFromEntity(categories []*models.Category
 	return serialized
 }
 
-func (u CategorySerializer) SerializeFromEntity(category *models.Category) CategorySerializer {
+func (u CategorySerializer) SerializeFromEntity(category *types.Category) CategorySerializer {
 
 	ps := CreateProductSerializer()
 
@@ -48,33 +47,33 @@ func (u CategorySerializer) SerializeFromEntity(category *models.Category) Categ
 
 }
 
-func (u CategorySerializer) SerializeFromCreateDto(dto dto.CategoryCreateDto) models.Category {
+func (u CategorySerializer) SerializeFromCreateDto(dto dto.CategoryCreateDto) types.Category {
 
-	var products []*models.Product
+	var products []*types.Product
 	for _, p := range dto.Products {
-		product := models.Product{}
+		product := types.Product{}
 		product.ID = p
 		products = append(products, &product)
 	}
-	return models.Category{
+	return types.Category{
 		Name:        dto.Name,
 		Description: dto.Description,
 		Products:    products,
 	}
 }
-func (u CategorySerializer) SerializeAllFromId(ids []uint) []*models.Category {
-	var categories []*models.Category
+func (u CategorySerializer) SerializeAllFromId(ids []uint) []*types.Category {
+	var categories []*types.Category
 	for _, ID := range ids {
 		categories = append(categories, u.SerializeFromID(ID))
 	}
 	return categories
 }
 
-func (u CategorySerializer) SerializeFromID(id uint) *models.Category {
+func (u CategorySerializer) SerializeFromID(id uint) *types.Category {
 	m := gorm.Model{
 		ID: id,
 	}
-	return &models.Category{
+	return &types.Category{
 		Model: m,
 	}
 }
