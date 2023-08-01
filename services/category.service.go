@@ -9,6 +9,7 @@ import (
 
 type ICategoryService interface {
 	CreateCategory(data *Types.Category) error
+	GetCategories(limit int) ([]*Types.Category, error)
 	GetCategoryById(id uint) (Types.Category, error)
 	UpdateCategoryById(id uint, data Types.Category) error
 	DeleteCategoryById(id uint) error

@@ -5,6 +5,7 @@ import (
 	"github.com/stellayazilim/stella.backend.tenant/common/dto"
 	"github.com/stellayazilim/stella.backend.tenant/common/serializers"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
+	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	"net/http"
 	"strconv"
 )
@@ -18,13 +19,13 @@ type ICategoryController interface {
 }
 
 type categoryController struct {
-	categoryServcie    ICategoryService
+	categoryServcie    Services.ICategoryService
 	categorySerializer serializers.ICategorySerializer
 }
 
 func CategoryController() ICategoryController {
 	return &categoryController{
-		categoryServcie:    categoryServcie{},
+		categoryServcie:    Services.CategoryService(),
 		categorySerializer: serializers.CreateCategorySerializer(),
 	}
 }
