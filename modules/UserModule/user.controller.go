@@ -1,12 +1,14 @@
 package UserModule
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	passwordvalidator "github.com/wagslane/go-password-validator"
 	"net/http"
+	"strconv"
 )
 
 type IUserController interface {
@@ -20,7 +22,6 @@ type IUserController interface {
 type userController struct {
 	userService       Services.IUserService
 	validationService Services.IValidationService
-	//userSerializer    IUserSerializer
 }
 
 func UserController() IUserController {
@@ -34,14 +35,15 @@ func UserController() IUserController {
 
 func (c userController) GetUsers(ctx *gin.Context) {
 
-	//if users, err := c.userService.GetUsers(10, 0); err == nil {
-
-	//ctx.JSON(200, c.userSerializer.SerializeAllFromEntity(users))
-	//}
+	if users, err := c.userService.GetUsers(10, 0); err == nil {
+		response := Types.UsersResponseBody{}
+		response.FromUserSlice(users)
+		ctx.JSON(200, response)
+	}
 }
 
 func (c userController) CreateUser(ctx *gin.Context) {
-	body := Types.UserCreateRequest{}
+	body := Types.UserCreateRequestBody{}
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": helpers.ListOfErrors(err),
@@ -50,6 +52,7 @@ func (c userController) CreateUser(ctx *gin.Context) {
 	}
 	// do not accept weak password
 	if err := passwordvalidator.Validate(string(body.Password), 30); err != nil {
+		fmt.Println("pasword weak")
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error()})
 		return
@@ -60,32 +63,50 @@ func (c userController) CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	// create validation token
-	//c.validationService.CreateValidationToken(&user)
-
-	// send validation token with email
-
 	//response on successfully created
 	ctx.Status(http.StatusMultiStatus)
 }
 
 func (c userController) GetUserByID(ctx *gin.Context) {
+	var id uint
+	var response Types.UserResponseBody
+	if _id, err := strconv.ParseUint(ctx.Param("id"), 10, 32); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	} else {
+		id = uint(_id)
+	}
 
-	//id, err := helpers.ConvertUint(ctx.Param("id"))
-
-	//if err != nil {
-	//	ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-	//		"error": err.Error(),
-	//	})
-	//}
-
-	//if user, err := c.userService.GetUserById(id); err == nil {
-	//ctx.JSON(http.StatusOK, c.userSerializer.SerializeFromEntity(user))
-	//}
+	if _user, err := c.userService.GetUserById(id); err != nil {
+		ctx.String(http.StatusNotFound, err.Error())
+		return
+	} else {
+		response.FromUser(_user)
+		ctx.JSON(http.StatusOK, response)
+	}
 
 }
 
 func (c userController) UpdateUserByID(ctx *gin.Context) {
+	var id uint
+
+	// get id
+	if _id, err := strconv.ParseUint(ctx.Param("id"), 10, 32); err != nil {
+
+		ctx.AbortWithStatus(http.StatusBadRequest)
+		return
+	} else {
+		// abort if id is not uint
+		id = uint(_id)
+	}
+
+	// get request body
+	body := Types.UserUpdateRequestBody{}
+	if err := c.userService.UpdateUserById(id, &body); err != nil {
+		ctx.AbortWithStatus(http.StatusUnprocessableEntity)
+	} else {
+		ctx.Status(http.StatusOK)
+	}
 
 }
 
