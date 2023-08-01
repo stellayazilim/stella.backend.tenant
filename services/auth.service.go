@@ -3,31 +3,26 @@ package Services
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule"
+	"github.com/stellayazilim/stella.backend.tenant/Database"
 	"github.com/stellayazilim/stella.backend.tenant/types"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"log"
 	"os"
 	"time"
 )
 
+/*
+Only add methods to expose at controllers
+*/
 type IAuthService interface {
-	SignTokens(user *types.User) (tokens, error)
-	getRefreshTokenString(token *jwt.Token) (string, error)
-	getAccessTokenString(token *jwt.Token) (string, error)
+	LoginWithCredentials(data *Types.User)
 }
 
-type accessTokenClaims struct {
-	Name  string
-	Perms []byte
-	jwt.RegisteredClaims
-}
-
-type refreshTokenClaims struct {
-	jwt.RegisteredClaims
-}
 type authService struct {
 	Tokens      tokens
-	UserService UserModule.IUserService
+	Database    *gorm.DB
+	UserService IUserService
 }
 type tokens struct {
 	AccessToken  string
@@ -36,11 +31,12 @@ type tokens struct {
 
 func AuthService() IAuthService {
 	return &authService{
-		UserService: UserModule.UserService(),
+		UserService: UserService(),
+		Database:    Database.DB.GetDatabase(),
 	}
 }
 
-func (s authService) SignTokens(user *types.User) (tokens, error) {
+func (s *authService) SignTokens(user *Types.User) (tokens, error) {
 	// access token
 	fmt.Println("istek buraya ulasti : sign tokens")
 	ac := accessTokenClaims{
@@ -90,7 +86,7 @@ func (s authService) SignTokens(user *types.User) (tokens, error) {
 	}, nil
 }
 
-func (s authService) getRefreshTokenString(token *jwt.Token) (string, error) {
+func (s *authService) getRefreshTokenString(token *jwt.Token) (string, error) {
 	var (
 		ts  string
 		err error
@@ -105,7 +101,7 @@ func (s authService) getRefreshTokenString(token *jwt.Token) (string, error) {
 	return "", fmt.Errorf("signing refresh token failed")
 }
 
-func (s authService) getAccessTokenString(token *jwt.Token) (string, error) {
+func (s *authService) getAccessTokenString(token *jwt.Token) (string, error) {
 	var (
 		ts  string
 		err error
@@ -117,6 +113,20 @@ func (s authService) getAccessTokenString(token *jwt.Token) (string, error) {
 	return "", fmt.Errorf("signing access token failed")
 }
 
-func (s authService) LoginWithCredentials(user types.User) {
+func (s *authService) LoginWithCredentials(data *Types.User) {
+	// get user with email
+	user := Types.User{}
+	s.Database.First(&user, "email = ?", user.Email)
+	if err := s.ComparePassword(user.Password, data.Password); err != nil {
+		// password is not valid
+	}
+	// login process
+}
 
+// compare if password is valid
+func (_ *authService) ComparePassword(hash []byte, password []byte) error {
+	if err := bcrypt.CompareHashAndPassword(hash, password); err != nil {
+		return err
+	}
+	return nil
 }

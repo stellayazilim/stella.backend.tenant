@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ProductModule/DTO"
+	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	"log"
 	"net/http"
 )
@@ -16,34 +17,16 @@ type IProductController interface {
 	DeleteProductById(ctx *gin.Context)
 }
 type productController struct {
-	productService IProductService
+	productService Services.IProductService
 }
 
 func ProductController() IProductController {
 	return &productController{
-		productService: ProductService(),
+		productService: Services.ProductService(),
 	}
 }
 func (c productController) CreateProduct(ctx *gin.Context) {
 
-	body := DTO.ProductCreateDto{}
-	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"errors": helpers.ListOfErrors(err),
-		})
-		log.Fatal(err)
-	}
-
-	if err := c.productService.CreateProduct(body.ConvertToEntity()); err != nil {
-		// todo handle error
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
-		log.Fatal(err)
-		return
-	}
-
-	ctx.JSON(http.StatusCreated, gin.H{
-		"message": "product created",
-	})
 }
 
 func (c productController) GetProducts(ctx *gin.Context) {

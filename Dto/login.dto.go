@@ -12,6 +12,6 @@ type UserLoginDto struct {
 func (d *UserLoginDto) GetAsUser() Types.User {
 	return Types.User{
 		Email:    d.Email,
-		Password: d.Password,
+		Password: []byte(d.Password),
 	}
 }

@@ -1,12 +1,13 @@
 package ProductModule
 
 import (
+	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	"time"
 )
 
 type IProductSerializer interface {
-	SerializeFromEntity(entity *types.Product) productSerializer
-	SerializeAllFromEntity(entities []*types.Product) []productSerializer
+	SerializeFromEntity(entity *Types.Product) productSerializer
+	SerializeAllFromEntity(entities []*Types.Product) []productSerializer
 }
 
 type productCategorySerializer struct {
@@ -33,7 +34,7 @@ func ProductSerializer() IProductSerializer {
 	return &productSerializer{}
 }
 
-func (s *productSerializer) SerializeFromEntity(entity *types.Product) productSerializer {
+func (s *productSerializer) SerializeFromEntity(entity *Types.Product) productSerializer {
 	return productSerializer{
 		ID:          entity.ID,
 		Name:        entity.Name,
@@ -59,7 +60,7 @@ func (s *productSerializer) SerializeFromEntity(entity *types.Product) productSe
 		}(),
 	}
 }
-func (s *productSerializer) SerializeAllFromEntity(entities []*types.Product) []productSerializer {
+func (s *productSerializer) SerializeAllFromEntity(entities []*Types.Product) []productSerializer {
 	var serializer []productSerializer
 	for _, c := range entities {
 		serializer = append(serializer, s.SerializeFromEntity(c))

@@ -3,7 +3,6 @@ package AuthModule
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule"
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	"net/http"
 )
@@ -15,13 +14,14 @@ type IAuthController interface {
 }
 type authController struct {
 	authService Services.IAuthService
-	userService UserModule.IUserService
+	userService Services.IUserService
 }
 
 func AuthController() IAuthController {
+	us := Services.UserService()
 	return &authController{
 		authService: Services.AuthService(),
-		userService: UserModule.UserService(),
+		userService: us,
 	}
 }
 

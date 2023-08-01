@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule/dto"
-	"github.com/stellayazilim/stella.backend.tenant/modules/ValidationModule"
+	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	passwordvalidator "github.com/wagslane/go-password-validator"
 	"net/http"
 )
@@ -18,26 +18,26 @@ type IUserController interface {
 }
 
 type userController struct {
-	userService       IUserService
-	validationService ValidationModule.IValidationService
-	userSerializer    IUserSerializer
+	userService       Services.IUserService
+	validationService Services.IValidationService
+	//userSerializer    IUserSerializer
 }
 
 func UserController() IUserController {
 
 	return userController{
-		userService:       UserService(),
-		validationService: ValidationModule.ValidationService(),
-		userSerializer:    UserSerializer(),
+		userService:       Services.UserService(),
+		validationService: Services.ValidationService(),
+		//userSerializer:    UserSerializer(),
 	}
 }
 
 func (c userController) GetUsers(ctx *gin.Context) {
 
-	if users, err := c.userService.GetUsers(10, 0); err == nil {
+	//if users, err := c.userService.GetUsers(10, 0); err == nil {
 
-		ctx.JSON(200, c.userSerializer.SerializeAllFromEntity(users))
-	}
+	//ctx.JSON(200, c.userSerializer.SerializeAllFromEntity(users))
+	//}
 }
 
 func (c userController) CreateUser(ctx *gin.Context) {
@@ -57,13 +57,13 @@ func (c userController) CreateUser(ctx *gin.Context) {
 	}
 	// serialize entity from dto
 
-	user := c.userSerializer.SerializeFromCreateDto(&body)
-	if err := c.userService.Create(&user); err != nil {
-		// user already exist
-		ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
-		return
-	}
-	c.validationService.CreateValidationToken(&user)
+	//user := c.userSerializer.SerializeFromCreateDto(&body)
+	//if err := c.userService.Create(&user); err != nil {
+	// user already exist
+	//	ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+	//	return
+	//}
+	//c.validationService.CreateValidationToken(&user)
 	//response on successfully created
 	ctx.JSON(http.StatusCreated, gin.H{
 		"message": "user created",
@@ -72,17 +72,17 @@ func (c userController) CreateUser(ctx *gin.Context) {
 
 func (c userController) GetUserByID(ctx *gin.Context) {
 
-	id, err := helpers.ConvertUint(ctx.Param("id"))
+	//id, err := helpers.ConvertUint(ctx.Param("id"))
 
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
-	}
+	//if err != nil {
+	//	ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+	//		"error": err.Error(),
+	//	})
+	//}
 
-	if user, err := c.userService.GetUserById(id); err == nil {
-		ctx.JSON(http.StatusOK, c.userSerializer.SerializeFromEntity(user))
-	}
+	//if user, err := c.userService.GetUserById(id); err == nil {
+	//ctx.JSON(http.StatusOK, c.userSerializer.SerializeFromEntity(user))
+	//}
 
 }
 
