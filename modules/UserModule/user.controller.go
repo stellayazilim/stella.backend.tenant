@@ -3,8 +3,8 @@ package UserModule
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
-	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule/dto"
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
+	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	passwordvalidator "github.com/wagslane/go-password-validator"
 	"net/http"
 )
@@ -41,7 +41,7 @@ func (c userController) GetUsers(ctx *gin.Context) {
 }
 
 func (c userController) CreateUser(ctx *gin.Context) {
-	body := dto.UserCreateDto{}
+	body := Types.UserCreateRequest{}
 	if err := ctx.ShouldBindJSON(&body); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": helpers.ListOfErrors(err),
@@ -49,25 +49,24 @@ func (c userController) CreateUser(ctx *gin.Context) {
 		return
 	}
 	// do not accept weak password
-	if err := passwordvalidator.Validate(body.Password, 30); err != nil {
+	if err := passwordvalidator.Validate(string(body.Password), 30); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+			"error": err.Error()})
 		return
 	}
-	// serialize entity from dto
+	if err := c.userService.Create(body.ConvertToUser()); err != nil {
+		// user already exist
+		ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
+		return
+	}
 
-	//user := c.userSerializer.SerializeFromCreateDto(&body)
-	//if err := c.userService.Create(&user); err != nil {
-	// user already exist
-	//	ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
-	//	return
-	//}
+	// create validation token
 	//c.validationService.CreateValidationToken(&user)
+
+	// send validation token with email
+
 	//response on successfully created
-	ctx.JSON(http.StatusCreated, gin.H{
-		"message": "user created",
-	})
+	ctx.Status(http.StatusMultiStatus)
 }
 
 func (c userController) GetUserByID(ctx *gin.Context) {
