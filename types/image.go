@@ -1,14 +1,15 @@
-package models
+package Types
 
 import (
 	"gorm.io/gorm"
 )
 
-type Role struct {
+type Image struct {
 	gorm.Model
 	TenantID    string
 	Name        string
 	Description string
 	Perms       []byte `gorm:"type:bytea"`
-	Users       []*User
+	Product     *Product
+	ProductID   uint
 }

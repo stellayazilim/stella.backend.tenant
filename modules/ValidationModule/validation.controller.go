@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
+	"github.com/stellayazilim/stella.backend.tenant/services"
 	"net/http"
 )
 
@@ -12,12 +13,12 @@ type IValidationController interface {
 }
 
 type validationController struct {
-	validationService IValidationService
+	validationService Services.IValidationService
 }
 
 func ValidationController() IValidationController {
 	return &validationController{
-		validationService: ValidationService(),
+		validationService: Services.ValidationService(),
 	}
 }
 

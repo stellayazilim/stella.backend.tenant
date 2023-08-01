@@ -1,11 +1,11 @@
 package CategoryModule
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/common/dto"
 	"github.com/stellayazilim/stella.backend.tenant/common/serializers"
 	"github.com/stellayazilim/stella.backend.tenant/helpers"
+	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	"net/http"
 	"strconv"
 )
@@ -19,13 +19,13 @@ type ICategoryController interface {
 }
 
 type categoryController struct {
-	categoryServcie    ICategoryService
+	categoryServcie    Services.ICategoryService
 	categorySerializer serializers.ICategorySerializer
 }
 
 func CategoryController() ICategoryController {
 	return &categoryController{
-		categoryServcie:    categoryServcie{},
+		categoryServcie:    Services.CategoryService(),
 		categorySerializer: serializers.CreateCategorySerializer(),
 	}
 }
@@ -44,12 +44,6 @@ func (c categoryController) CreateCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"data": gin.H{
-			"message":  "created",
-			"category": fmt.Sprintf("http://localhost:8080/categories/%v", category.ID),
-		},
-	})
 }
 
 func (c categoryController) GetCategories(ctx *gin.Context) {

@@ -1,7 +1,7 @@
 package DTO
 
 import (
-	"github.com/stellayazilim/stella.backend.tenant/models"
+	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	"gorm.io/gorm"
 )
 
@@ -15,16 +15,16 @@ type ProductCreateDto struct {
 	Categories  []uint            `json:"categories"`
 }
 
-func (d *ProductCreateDto) ConvertToEntity() models.Product {
-	var categories []*models.Category
+func (d *ProductCreateDto) ConvertToEntity() Types.Product {
+	var categories []*Types.Category
 	for _, c := range d.Categories {
-		categories = append(categories, &models.Category{
+		categories = append(categories, &Types.Category{
 			Model: gorm.Model{
 				ID: c,
 			},
 		})
 	}
-	return models.Product{
+	return Types.Product{
 		Name:        d.Name,
 		Description: d.Description,
 		Explanation: d.Explanation,

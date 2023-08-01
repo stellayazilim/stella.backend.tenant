@@ -1,17 +1,17 @@
 package serializers
 
 import (
-	"github.com/stellayazilim/stella.backend.tenant/models"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ProductModule/DTO"
+	"github.com/stellayazilim/stella.backend.tenant/types"
 	"gorm.io/gorm"
 )
 
 type IProductSerializer interface {
-	SerializeAllFromEntity(product []*models.Product) []ProductSerializer
-	SerializeFromEntity(product *models.Product) ProductSerializer
-	SerializeFromCreateDto(dto *DTO.ProductCreateDto) *models.Product
-	SerializeFromID(id uint) models.Product
-	SerializeAllFromID(dto []uint) []models.Product
+	SerializeAllFromEntity(product []*Types.Product) []ProductSerializer
+	SerializeFromEntity(product *Types.Product) ProductSerializer
+	SerializeFromCreateDto(dto *DTO.ProductCreateDto) *Types.Product
+	SerializeFromID(id uint) Types.Product
+	SerializeAllFromID(dto []uint) []Types.Product
 }
 
 type ProductSerializer struct {
@@ -25,7 +25,7 @@ func CreateProductSerializer() IProductSerializer {
 	return &ProductSerializer{}
 }
 
-func (u ProductSerializer) SerializeAllFromEntity(products []*models.Product) []ProductSerializer {
+func (u ProductSerializer) SerializeAllFromEntity(products []*Types.Product) []ProductSerializer {
 	var p []ProductSerializer
 
 	for _, product := range products {
@@ -34,7 +34,7 @@ func (u ProductSerializer) SerializeAllFromEntity(products []*models.Product) []
 	return p
 }
 
-func (u ProductSerializer) SerializeFromEntity(product *models.Product) ProductSerializer {
+func (u ProductSerializer) SerializeFromEntity(product *Types.Product) ProductSerializer {
 	cs := CreateCategorySerializer()
 	return ProductSerializer{
 		ID:          product.ID,
@@ -44,9 +44,9 @@ func (u ProductSerializer) SerializeFromEntity(product *models.Product) ProductS
 	}
 }
 
-func (u ProductSerializer) SerializeFromCreateDto(dto *DTO.ProductCreateDto) *models.Product {
+func (u ProductSerializer) SerializeFromCreateDto(dto *DTO.ProductCreateDto) *Types.Product {
 	cs := CreateCategorySerializer()
-	return &models.Product{
+	return &Types.Product{
 		Name:        dto.Name,
 		Description: dto.Description,
 		Explanation: dto.Explanation,
@@ -57,8 +57,8 @@ func (u ProductSerializer) SerializeFromCreateDto(dto *DTO.ProductCreateDto) *mo
 	}
 }
 
-func (u ProductSerializer) SerializeAllFromID(dto []uint) []models.Product {
-	var products []models.Product
+func (u ProductSerializer) SerializeAllFromID(dto []uint) []Types.Product {
+	var products []Types.Product
 
 	for _, product := range dto {
 		products = append(products, u.SerializeFromID(product))
@@ -67,11 +67,11 @@ func (u ProductSerializer) SerializeAllFromID(dto []uint) []models.Product {
 	return products
 }
 
-func (u ProductSerializer) SerializeFromID(id uint) models.Product {
+func (u ProductSerializer) SerializeFromID(id uint) Types.Product {
 	m := gorm.Model{
 		ID: id,
 	}
-	return models.Product{
+	return Types.Product{
 		Model: m,
 	}
 }

@@ -3,78 +3,49 @@ package AuthModule
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/stellayazilim/stella.backend.tenant/common/dto"
-	"github.com/stellayazilim/stella.backend.tenant/helpers"
-	"github.com/stellayazilim/stella.backend.tenant/models"
-	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule"
-	"log"
+	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	"net/http"
 )
 
 type IAuthController interface {
 	LoginWithCredentials(ctx *gin.Context)
+	GetMe(ctx *gin.Context)
+	Refresh(ctx *gin.Context)
 }
 type authController struct {
-	authService IAuthService
-	userService UserModule.IUserService
+	authService Services.IAuthService
+	userService Services.IUserService
 }
 
 func AuthController() IAuthController {
+	us := Services.UserService()
 	return &authController{
-		authService: AuthService(),
-		userService: UserModule.UserService(),
+		authService: Services.AuthService(),
+		userService: us,
 	}
 }
 
-func (c authController) LoginWithCredentials(ctx *gin.Context) {
-	loginData := dto.UserLoginDto{}
-	if err := ctx.ShouldBindJSON(&loginData); err != nil {
+func (c *authController) LoginWithCredentials(ctx *gin.Context) {
 
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"errors": helpers.ListOfErrors(err),
-		})
-		log.Fatal(err)
-		return
-	}
+}
 
-	user := models.User{
-		Email: loginData.Email,
-	}
+func (c *authController) GetMe(ctx *gin.Context) {
 
-	// get user if exist
-	if err := c.userService.GetUserByEmail(&user); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{
-			"errors": []string{"email does not exist"},
-		})
-		return
-	}
-	fmt.Println("istek buraya ulasti : before validate pass", user)
-	// check password of user
-	if err := c.authService.ValidatePassword(&user, loginData); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"errors": []string{"email and password does not match"},
-		})
-		return
-	}
-	fmt.Println("istek buraya ulasti : after validate pass")
-	// sign tokens
-	var (
-		signedTokens tokens
-		err          error
-	)
-	fmt.Println("istek buraya ulasti : before sign tokens")
-	if signedTokens, err = c.authService.SignTokens(&user); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error": err,
-		})
+	token := ctx.GetHeader("Authorization")
 
-		return
-	}
-	fmt.Println("istek buraya ulasti : after validate pass")
-	// return tokens
+	fmt.Println(token)
 	ctx.JSON(http.StatusOK, gin.H{
-		"accessToken":  signedTokens.AccessToken,
-		"refreshToken": signedTokens.RefreshToken,
+		"username": "stella",
 	})
+}
 
+func (c *authController) Refresh(ctx *gin.Context) {
+	token := ctx.GetHeader("Authorization")
+
+	fmt.Println(token)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"accessToken":  token,
+		"refreshToken": token,
+	})
 }
