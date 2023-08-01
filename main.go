@@ -3,11 +3,10 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/stellayazilim/stella.backend.tenant/misc"
+	"github.com/stellayazilim/stella.backend.tenant/Database"
 	"github.com/stellayazilim/stella.backend.tenant/modules/AuthModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/CategoryModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ContentModule"
-	"github.com/stellayazilim/stella.backend.tenant/modules/DatabaseModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ProductModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ValidationModule"
@@ -39,11 +38,9 @@ func main() {
 		stack module initializers here
 	*/
 	// init database
-	DatabaseModule.InitDatabaseModule()
-	// add administrator user
-	misc.Initalize()
+	Database.DB.InitDb()
 	// migrate database on startup
-	DatabaseModule.MigrateDB()
+	Database.DB.Migrate()
 	// init router
 	router := gin.Default()
 

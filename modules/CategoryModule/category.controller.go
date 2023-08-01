@@ -1,7 +1,6 @@
 package CategoryModule
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/stellayazilim/stella.backend.tenant/common/dto"
 	"github.com/stellayazilim/stella.backend.tenant/common/serializers"
@@ -44,12 +43,6 @@ func (c categoryController) CreateCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{
-		"data": gin.H{
-			"message":  "created",
-			"category": fmt.Sprintf("http://localhost:8080/categories/%v", category.ID),
-		},
-	})
 }
 
 func (c categoryController) GetCategories(ctx *gin.Context) {
