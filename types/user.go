@@ -18,14 +18,14 @@ type User struct {
 	RoleID      *uint
 }
 
-type UserCreateRequest struct {
+type UserCreateRequestBody struct {
 	Name        string `json:"name"`
 	Email       string `json:"email"`
 	PhoneNumber string `json:"phoneNumber"`
 	Password    []byte `json:"password"`
 }
 
-func (u *UserCreateRequest) ConvertToUser() *User {
+func (u *UserCreateRequestBody) ConvertToUser() *User {
 	return &User{
 		Name:        u.Name,
 		Email:       u.Email,
@@ -34,8 +34,8 @@ func (u *UserCreateRequest) ConvertToUser() *User {
 	}
 }
 
-// single User response
-type UserResponse struct {
+// single User responseBody
+type UserResponseBody struct {
 	ID          uint   `json:"id"`
 	Name        string `json:"name"`
 	Email       string `json:"email"`
@@ -43,8 +43,8 @@ type UserResponse struct {
 	Role        *Role  `json:"role"`
 }
 
-// map single User to UserResponse
-func (u *UserResponse) FromUser(data User) {
+// map single User to UserResponseBody
+func (u *UserResponseBody) FromUser(data User) {
 	u.ID = data.ID
 	u.Name = data.Name
 	u.Email = data.Email
@@ -53,17 +53,34 @@ func (u *UserResponse) FromUser(data User) {
 }
 
 // multiple users response
-type UsersResponse []UserResponse
+type UsersResponseBody []UserResponseBody
 
 // Map []User to UsersResponse
-func (e *UsersResponse) FromUserSlice(data []User) {
+func (e *UsersResponseBody) FromUserSlice(data []User) {
 	for _, user := range data {
-		*e = append(*e, UserResponse{
+		*e = append(*e, UserResponseBody{
 			ID:          user.ID,
 			Name:        user.Name,
 			Email:       user.Email,
 			IsValidated: user.IsValidated,
 			Role:        user.Role,
 		})
+	}
+}
+
+type UserUpdateRequestBody struct {
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	PhoneNumber string `json:"phoneNumber"`
+	Role        *Role  `json:"role"`
+}
+
+func (u UserUpdateRequestBody) ConvertToUser() *User {
+
+	return &User{
+		Name:        u.Name,
+		Email:       u.Email,
+		PhoneNumber: u.PhoneNumber,
+		Role:        u.Role,
 	}
 }

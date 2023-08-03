@@ -2,7 +2,7 @@ package Services
 
 import (
 	"fmt"
-	"github.com/stellayazilim/stella.backend.tenant/Database"
+	"github.com/stellayazilim/stella.backend.tenant/dataase"
 	"github.com/stellayazilim/stella.backend.tenant/types"
 	"log"
 )
@@ -16,7 +16,7 @@ type ICategoryService interface {
 }
 
 type categoryServcie struct {
-	Database Database.IDatabase
+	Database dataase.IDatabase
 }
 
 func CategoryService() ICategoryService {
@@ -49,7 +49,7 @@ func (s *categoryServcie) GetCategoryById(id uint) (Types.Category, error) {
 func (s *categoryServcie) UpdateCategoryById(id uint, data Types.Category) error {
 
 	data.ID = id
-	if err := Database.DB.GetDatabase().Save(&data).Error; err != nil {
+	if err := dataase.DB.GetDatabase().Save(&data).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}
@@ -58,7 +58,7 @@ func (s *categoryServcie) UpdateCategoryById(id uint, data Types.Category) error
 
 func (s *categoryServcie) DeleteCategoryById(id uint) error {
 
-	if err := Database.DB.GetDatabase().Delete(Types.Category{}, id).Error; err != nil {
+	if err := dataase.DB.GetDatabase().Delete(Types.Category{}, id).Error; err != nil {
 		log.Fatal(err)
 		return err
 	}

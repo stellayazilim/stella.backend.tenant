@@ -3,9 +3,9 @@ package ValidationModule
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	"github.com/stellayazilim/stella.backend.tenant/services"
 	"net/http"
+	"strconv"
 )
 
 type IValidationController interface {
@@ -24,7 +24,7 @@ func ValidationController() IValidationController {
 
 func (c validationController) VerifyValidationToken(ctx *gin.Context) {
 
-	id, err := helpers.ConvertUint(ctx.Param("id"))
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 32)
 
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
