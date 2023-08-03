@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/stellayazilim/stella.backend.tenant/dataase"
+	"github.com/stellayazilim/stella.backend.tenant/database"
 	"github.com/stellayazilim/stella.backend.tenant/middlewares"
 	"github.com/stellayazilim/stella.backend.tenant/modules/AuthModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/CategoryModule"
@@ -24,9 +24,9 @@ func main() {
 		stack module initializers here
 	*/
 	// init database
-	dataase.DB.InitDb()
+	database.DB.InitDb()
 	// migrate database on startup
-	dataase.DB.Migrate()
+	database.DB.Migrate()
 	// init router
 	router := gin.Default()
 

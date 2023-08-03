@@ -3,7 +3,7 @@ package Services
 import (
 	"errors"
 	"fmt"
-	"github.com/stellayazilim/stella.backend.tenant/dataase"
+	"github.com/stellayazilim/stella.backend.tenant/database"
 	"github.com/stellayazilim/stella.backend.tenant/types"
 	"gorm.io/gorm"
 	"log"
@@ -26,7 +26,7 @@ type userService struct {
 // constructor
 func UserService() IUserService {
 	return &userService{
-		Database: dataase.DB.GetDatabase(),
+		Database: database.DB.GetDatabase(),
 	}
 }
 

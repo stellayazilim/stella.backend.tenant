@@ -1,7 +1,7 @@
 package Services
 
 import (
-	"github.com/stellayazilim/stella.backend.tenant/dataase"
+	"github.com/stellayazilim/stella.backend.tenant/database"
 	"github.com/stellayazilim/stella.backend.tenant/types"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -24,7 +24,7 @@ func AuthService() IAuthService {
 	return &authService{
 		UserService:  UserService(),
 		TokenService: TokenService(),
-		Database:     dataase.DB.GetDatabase(),
+		Database:     database.DB.GetDatabase(),
 	}
 }
 

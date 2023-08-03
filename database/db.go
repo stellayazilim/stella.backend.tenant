@@ -1,4 +1,4 @@
-package dataase
+package database
 
 import (
 	Types "github.com/stellayazilim/stella.backend.tenant/types"
