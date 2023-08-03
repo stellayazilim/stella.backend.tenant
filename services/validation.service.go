@@ -3,7 +3,7 @@ package Services
 import (
 	"fmt"
 	"github.com/lucsky/cuid"
-	"github.com/stellayazilim/stella.backend.tenant/Database"
+	"github.com/stellayazilim/stella.backend.tenant/dataase"
 	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	"gorm.io/gorm"
 )
@@ -19,7 +19,7 @@ type validationService struct {
 
 func ValidationService() IValidationService {
 	return &validationService{
-		Database: Database.DB.GetDatabase(),
+		Database: dataase.DB.GetDatabase(),
 	}
 }
 

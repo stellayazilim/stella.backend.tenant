@@ -2,11 +2,11 @@ package ProductModule
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ProductModule/DTO"
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type IProductController interface {
@@ -37,15 +37,13 @@ func (c productController) GetProducts(ctx *gin.Context) {
 }
 
 func (c productController) GetProductById(ctx *gin.Context) {
-	id, err := helpers.ConvertUint(ctx.Param("id"))
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 32)
 	serializer := ProductSerializer()
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"errors": helpers.ListOfErrors(err),
-		})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		log.Fatal(err)
 	}
-	product, err := c.productService.GetProductById(id)
+	product, err := c.productService.GetProductById(uint(id))
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusNotFound)
 		return
@@ -54,27 +52,21 @@ func (c productController) GetProductById(ctx *gin.Context) {
 }
 
 func (c productController) UpdateProductById(ctx *gin.Context) {
-	id, err := helpers.ConvertUint(ctx.Param("id"))
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 32)
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"errors": helpers.ListOfErrors(err),
-		})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, err)
 		log.Fatal(err, id)
 	}
 
 	body := DTO.ProductUpdateDto{}
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"errors": helpers.ListOfErrors(err),
-		})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		log.Fatal(err)
 	}
 
 	entity := body.ConvertToEntity()
-	if err := c.productService.UpdateProductById(id, &entity); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
-			"errors": helpers.ListOfErrors(err),
-		})
+	if err := c.productService.UpdateProductById(uint(id), &entity); err != nil {
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, err.Error())
 	}
 
 	serializer := ProductSerializer()

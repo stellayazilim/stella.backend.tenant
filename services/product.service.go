@@ -1,7 +1,7 @@
 package Services
 
 import (
-	"github.com/stellayazilim/stella.backend.tenant/Database"
+	"github.com/stellayazilim/stella.backend.tenant/dataase"
 	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	"gorm.io/gorm"
 	"log"
@@ -21,7 +21,7 @@ type productService struct {
 
 func ProductService() IProductService {
 	return &productService{
-		Database: Database.DB.GetDatabase(),
+		Database: dataase.DB.GetDatabase(),
 	}
 }
 

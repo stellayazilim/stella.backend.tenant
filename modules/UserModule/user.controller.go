@@ -3,7 +3,6 @@ package UserModule
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/stellayazilim/stella.backend.tenant/helpers"
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	passwordvalidator "github.com/wagslane/go-password-validator"
@@ -45,9 +44,7 @@ func (c userController) GetUsers(ctx *gin.Context) {
 func (c userController) CreateUser(ctx *gin.Context) {
 	body := Types.UserCreateRequestBody{}
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error": helpers.ListOfErrors(err),
-		})
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
 	// do not accept weak password

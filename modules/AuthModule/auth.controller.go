@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
+	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	"net/http"
 )
 
@@ -26,7 +27,21 @@ func AuthController() IAuthController {
 }
 
 func (c *authController) LoginWithCredentials(ctx *gin.Context) {
+	body := Types.UserLoginWithCredentialRequest{}
 
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		fmt.Println("Body:", body)
+		ctx.AbortWithStatus(http.StatusUnprocessableEntity)
+		return
+	}
+
+	fmt.Println("Body:", body)
+
+	if tokens, err := c.authService.LoginWithCredentials(&body); err != nil {
+		ctx.Status(http.StatusUnauthorized)
+	} else {
+		ctx.JSON(http.StatusOK, tokens)
+	}
 }
 
 func (c *authController) GetMe(ctx *gin.Context) {
