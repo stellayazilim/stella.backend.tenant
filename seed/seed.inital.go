@@ -1,3 +1,0 @@
-package seed
-
-func main() {}

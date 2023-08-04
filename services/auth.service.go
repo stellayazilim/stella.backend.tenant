@@ -1,6 +1,7 @@
 package Services
 
 import (
+	"fmt"
 	"github.com/stellayazilim/stella.backend.tenant/database"
 	"github.com/stellayazilim/stella.backend.tenant/types"
 	"golang.org/x/crypto/bcrypt"
@@ -12,6 +13,7 @@ Only add methods to expose at controllers
 */
 type IAuthService interface {
 	LoginWithCredentials(data *Types.UserLoginWithCredentialRequest) (Types.TokensResponse, error)
+	RegisterUser(data *Types.User) error
 }
 
 type authService struct {
@@ -33,6 +35,8 @@ func (s *authService) LoginWithCredentials(data *Types.UserLoginWithCredentialRe
 	user := Types.User{}
 	s.Database.Joins("Role").First(&user, "email = ?", data.Email)
 	if err := s.ComparePassword(user.Password, []byte(data.Password)); err != nil {
+		fmt.Println(string(user.Password), string(data.Password))
+		fmt.Println("passwords does not match")
 		return Types.TokensResponse{}, err
 	}
 
@@ -45,6 +49,21 @@ func (s *authService) LoginWithCredentials(data *Types.UserLoginWithCredentialRe
 		RefreshToken: s.TokenService.GetTokenString("REFRESH_TOKEN_SECRET", refreshToken),
 	}, nil
 
+}
+
+func (s authService) RegisterUser(data *Types.User) error {
+
+	if data.Role == nil {
+		userRole := Types.Role{}
+		if err := s.Database.Find(&userRole, "name = ?", "user").Error; err != nil {
+			return err
+		}
+		data.Role = &userRole
+	}
+	if err := s.Database.Model(Types.User{}).Create(&data).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 // compare if password is valid

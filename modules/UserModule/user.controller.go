@@ -6,6 +6,7 @@ import (
 	Services "github.com/stellayazilim/stella.backend.tenant/services"
 	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	passwordvalidator "github.com/wagslane/go-password-validator"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strconv"
 )
@@ -54,6 +55,14 @@ func (c userController) CreateUser(ctx *gin.Context) {
 			"error": err.Error()})
 		return
 	}
+
+	if hashedPassword, err := bcrypt.GenerateFromPassword(body.Password, bcrypt.DefaultCost); err != nil {
+		ctx.AbortWithStatus(http.StatusUnprocessableEntity)
+		return
+	} else {
+		body.Password = hashedPassword
+	}
+
 	if err := c.userService.Create(body.ConvertToUser()); err != nil {
 		// user already exist
 		ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"error": err.Error()})
