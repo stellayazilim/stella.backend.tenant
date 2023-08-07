@@ -3,7 +3,7 @@ package Services
 import (
 	"fmt"
 	"github.com/stellayazilim/stella.backend.tenant/database"
-	"github.com/stellayazilim/stella.backend.tenant/types"
+	Types "github.com/stellayazilim/stella.backend.tenant/types"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -55,10 +55,11 @@ func (s authService) RegisterUser(data *Types.User) error {
 
 	if data.Role == nil {
 		userRole := Types.Role{}
-		if err := s.Database.Find(&userRole, "name = ?", "user").Error; err != nil {
+		if err := s.Database.Find(&userRole, "name = ?", "User").Error; err != nil {
 			return err
 		}
-		data.Role = &userRole
+
+		data.RoleID = &userRole.ID
 	}
 	if err := s.Database.Model(Types.User{}).Create(&data).Error; err != nil {
 		return err

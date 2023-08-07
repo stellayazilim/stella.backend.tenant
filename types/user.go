@@ -76,7 +76,6 @@ type UserUpdateRequestBody struct {
 }
 
 func (u UserUpdateRequestBody) ConvertToUser() *User {
-
 	return &User{
 		Name:        u.Name,
 		Email:       u.Email,

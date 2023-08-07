@@ -39,7 +39,7 @@ func (s userService) Create(user *Types.User) error {
 
 func (s userService) GetUsers(limit int, offset int) ([]Types.User, error) {
 	var users []Types.User
-	result := s.Database.Find(&users).Limit(limit).Offset(offset)
+	result := s.Database.Preload("Role").Find(&users).Limit(limit).Offset(offset)
 	if result.RowsAffected < 1 || result.Error != nil {
 		return users, errors.New("User(s) not found")
 	}
