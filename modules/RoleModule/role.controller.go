@@ -18,6 +18,8 @@ type IRoleController interface {
 	RemovePermsFromRole(ctx *gin.Context)
 	GetRoles(ctx *gin.Context)
 	GetRoleByID(ctx *gin.Context)
+	GetPermsOfRoleByID(ctx *gin.Context)
+	GetUsersOfRoleByID(ctx *gin.Context)
 }
 
 func RoleController() IRoleController {
@@ -53,7 +55,9 @@ func (c *roleController) RemovePermsFromRole(ctx *gin.Context) {
 
 }
 func (c *roleController) GetRoles(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, c.roleService.GetRoles())
+	var roles Types.GetRolesResponse
+	roles.FromRoles(c.roleService.GetRoles())
+	ctx.JSON(http.StatusOK, roles)
 }
 
 func (c *roleController) GetRoleByID(ctx *gin.Context) {
@@ -72,7 +76,38 @@ func (c *roleController) GetRoleByID(ctx *gin.Context) {
 		})
 		return
 	} else {
-		ctx.JSON(http.StatusOK, role)
+		var _role Types.GetRoleResponse
+		_role.FromRole(role)
+		ctx.JSON(http.StatusOK, _role)
+	}
+}
+func (c *roleController) GetPermsOfRoleByID(ctx *gin.Context) {
+	var id uint
+
+	if _id, err := strconv.ParseUint(ctx.Param("id"), 10, 32); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	} else {
+		id = uint(_id)
 	}
 
+	c.roleService.GetPermsOfRoleByID(id)
+
+	ctx.JSON(http.StatusOK, Types.RolePermsResponse{
+		Perms: c.roleService.GetPermsOfRoleByID(id),
+	})
+}
+
+func (c *roleController) GetUsersOfRoleByID(ctx *gin.Context) {
+	var id uint
+
+	if _id, err := strconv.ParseUint(ctx.Param("id"), 10, 32); err != nil {
+		ctx.AbortWithStatus(400)
+		return
+	} else {
+		id = uint(_id)
+	}
+	users := Types.UsersResponseBody{}
+	users.FromUserSlice(c.roleService.GetUsersOfRoleById(id))
+	ctx.JSON(http.StatusOK, users)
 }
