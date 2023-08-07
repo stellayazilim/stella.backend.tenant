@@ -12,7 +12,7 @@ import (
 
 type IUserService interface {
 	Create(user *Types.User) error
-	GetUsers(limit int, offset int) ([]Types.User, error)
+	GetUsers(limit int, offset int) (*[]*Types.User, error)
 	GetUserById(id uint) (Types.User, error)
 	GetUserByEmail(user *Types.User) error
 	UpdateUserById(id uint, user *Types.UserUpdateRequestBody) error
@@ -37,8 +37,8 @@ func (s userService) Create(user *Types.User) error {
 	return nil
 }
 
-func (s userService) GetUsers(limit int, offset int) ([]Types.User, error) {
-	var users []Types.User
+func (s userService) GetUsers(limit int, offset int) (*[]*Types.User, error) {
+	var users *[]*Types.User
 	result := s.Database.Preload("Role").Find(&users).Limit(limit).Offset(offset)
 	if result.RowsAffected < 1 || result.Error != nil {
 		return users, errors.New("User(s) not found")

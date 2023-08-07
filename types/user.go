@@ -1,6 +1,8 @@
 package Types
 
 import (
+	"fmt"
+	"github.com/stellayazilim/stella.backend.tenant/constants/prefixes"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +42,7 @@ type UserResponseBody struct {
 	Name        string `json:"name"`
 	Email       string `json:"email"`
 	IsValidated bool   `json:"isValidated"`
-	Role        *Role  `json:"role"`
+	Role        string `json:"role"`
 }
 
 // map single User to UserResponseBody
@@ -49,21 +51,21 @@ func (u *UserResponseBody) FromUser(data User) {
 	u.Name = data.Name
 	u.Email = data.Email
 	u.IsValidated = data.IsValidated
-	u.Role = data.Role
+	u.Role = fmt.Sprintf("%s/roles/%v", prefixes.BASE_URL, *data.RoleID)
 }
 
 // multiple users response
 type UsersResponseBody []UserResponseBody
 
 // Map []User to UsersResponse
-func (e *UsersResponseBody) FromUserSlice(data []User) {
-	for _, user := range data {
+func (e *UsersResponseBody) FromUserSlice(data *[]*User) {
+	for _, user := range *data {
 		*e = append(*e, UserResponseBody{
 			ID:          user.ID,
 			Name:        user.Name,
 			Email:       user.Email,
 			IsValidated: user.IsValidated,
-			Role:        user.Role,
+			Role:        fmt.Sprintf("%s/roles/%v", prefixes.BASE_URL, *user.RoleID),
 		})
 	}
 }

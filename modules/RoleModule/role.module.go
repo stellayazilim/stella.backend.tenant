@@ -9,4 +9,6 @@ func InitRoleModule(r *gin.RouterGroup) {
 	r.GET("/", c.GetRoles)
 	r.GET("/:id", c.GetRoleByID)
 	r.POST("/", c.CreateRole)
+	r.GET("/:id/perms", c.GetPermsOfRoleByID)
+	r.GET("/:id/users", c.GetUsersOfRoleByID)
 }

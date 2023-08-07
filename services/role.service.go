@@ -15,6 +15,8 @@ type IRoleService interface {
 	CreateRole(data *Types.Role) error
 	GetRoles() *[]*Types.Role
 	GetRoleByID(id uint) (*Types.Role, error)
+	GetPermsOfRoleByID(id uint) *[]byte
+	GetUsersOfRoleById(id uint) *[]*Types.User
 }
 
 func RoleService() IRoleService {
@@ -44,4 +46,18 @@ func (s *roleService) GetRoleByID(id uint) (*Types.Role, error) {
 		return &role, errors.New("Role does not exist")
 	}
 	return &role, nil
+}
+
+func (s *roleService) GetPermsOfRoleByID(id uint) *[]byte {
+
+	role := Types.Role{}
+	s.db.Select("perms").First(&role, id)
+
+	return &role.Perms
+}
+
+func (s *roleService) GetUsersOfRoleById(id uint) *[]*Types.User {
+	role := Types.Role{}
+	s.db.Preload("Users").First(&role, id)
+	return &role.Users
 }
