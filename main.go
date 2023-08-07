@@ -9,6 +9,7 @@ import (
 	"github.com/stellayazilim/stella.backend.tenant/modules/CategoryModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ContentModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ProductModule"
+	"github.com/stellayazilim/stella.backend.tenant/modules/RoleModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/UserModule"
 	"github.com/stellayazilim/stella.backend.tenant/modules/ValidationModule"
 	"log"
@@ -32,6 +33,9 @@ func main() {
 
 	// apply cors middleware for every request
 	router.Use(middlewares.CORSMiddleware("*"))
+
+	// init role module
+	RoleModule.InitRoleModule(router.Group("roles"))
 	// init user module
 	UserModule.InitUserModule(router.Group("users"))
 	// init auth module
